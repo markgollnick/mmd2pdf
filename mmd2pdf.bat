@@ -1,0 +1,105 @@
+@echo off
+
+
+:: Orientation
+for /F "usebackq delims=" %%F in (`echo %~dpnx0`) do (
+    set THIS=%%~nxF
+    set WDIR=%%~dpF
+)
+for /F "usebackq delims=" %%F in (`dir /B %WDIR%\multimarkdown*`) do (
+    set MMD_DIR=%WDIR%\%%~nxF
+)
+for /F "usebackq delims=" %%F in (`dir /B %WDIR%\wkhtml*`) do (
+    set WKHTML_DIR=%WDIR%\%%~nxF
+)
+for /F "usebackq delims=" %%F in (`dir /B %WDIR%\mathjax*`) do (
+    set MATHJAX_JS=%WDIR%\%%~nxF\MathJax.js
+)
+set STYLE_CSS=%WDIR%\style.css
+
+
+:: Initialization
+set MATH=N
+set KEEPHTML=N
+set DIR_OUT=.
+set FILE_IN=
+set NAME_IN=
+set INIT=N
+
+for %%A in (%*) do (
+    if /I "%%~A"=="/MATH" set MATH=Y
+    if /I "%%~A"=="/KEEPHTML" set KEEPHTML=Y
+    if exist "%%~A" (
+        set DIR_OUT=%%~dpA
+        set FILE_IN=%%~dpnxA
+        set NAME_IN=%%~nA
+        set INIT=Y
+    )
+)
+if /I "%INIT%"=="N" goto usage
+goto run
+
+
+:: Usage Block
+:usage
+echo %THIS%:
+echo Batch script for easily converting MultiMarkdown texts into PDF documents.
+echo Written by Mark R. Gollnick ^<mark.r.gollnick@gmail.com^>, Spring 2013. ^&#10013;
+echo.
+echo Usage:
+echo %THIS% [OPTIONS] ^<input_file.md^>
+echo.
+echo Produces one file of the form `input_file.pdf' in the same directory
+echo as the input.
+echo.
+echo To insert page breaks in the resulting PDF, use:
+echo     ^<div style="page-break-after: always;"^>^</div^>
+echo.
+echo Options:
+echo     /MATH          Enable TeX equation rendering using MathJax
+echo     /KEEPHTML      Retains the intermediate HTML document used to
+echo                    render the PDF.
+goto eof
+exit
+
+
+:run
+:: STEP 0: Normalize input
+set MDHTML_OUT=%DIR_OUT%\%NAME_IN%.md.html
+set HEADER_OUT=%DIR_OUT%\%NAME_IN%.head.html
+set HTML_OUT=%DIR_OUT%\%NAME_IN%.html
+set PDF_OUT=%DIR_OUT%\%NAME_IN%.pdf
+
+:: STEP 1: Markdown to HTML
+%MMD_DIR%\multimarkdown.exe "%FILE_IN%" > "%MDHTML_OUT%"
+
+:: STEP 2: Format HTML
+(echo ^<!DOCTYPE html^>)>%HEADER_OUT%
+(echo ^<html^>)>>%HEADER_OUT%
+(echo ^<head^>)>>%HEADER_OUT%
+(echo     ^<meta charset="utf-8"/^>)>>%HEADER_OUT%
+(echo     ^<title^>%NAME_IN%^</title^>)>>%HEADER_OUT%
+(echo     ^<link type="text/css" rel="stylesheet" href="%STYLE_CSS%" /^>)>>%HEADER_OUT%
+if "%MATH%"=="Y" (
+    (echo     ^<script type="text/javascript" src="%MATHJAX_JS%?config=pdf"^>)>>%HEADER_OUT%
+    (echo     ^</script^>)>>%HEADER_OUT%
+)
+(echo ^</head^>)>>%HEADER_OUT%
+(echo ^<body^>)>>%HEADER_OUT%
+(copy /B /Y %HEADER_OUT% + %MDHTML_OUT% %HTML_OUT%)>nul
+(echo ^</body^>^</html^>)>>%HTML_OUT%
+(del /F /Q %HEADER_OUT% %MDHTML_OUT%)>nul
+
+:: STEP 3: HTML to PDF
+if "%MATH%"=="N" (
+    %WKHTML_DIR%\wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "%HTML_OUT%" "%PDF_OUT%"
+) else (
+    %WKHTML_DIR%\wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 5000 "%HTML_OUT%" "%PDF_OUT%"
+)
+if "%KEEPHTML%"=="N" (
+    (del /F /Q %HTML_OUT%)>nul
+)
+
+echo Wrote as %PDF_OUT%. Have a nice day!
+
+:eof
