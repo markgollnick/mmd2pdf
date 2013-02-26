@@ -28,7 +28,8 @@ set INIT=N
 
 for %%A in (%*) do (
     if /I "%%~A"=="/MATH" set MATH=Y
-    if /I "%%~A"=="/KEEPHTML" set KEEPHTML=Y
+    if /I "%%~A"=="/KEEPHTML" set KEEPHTML=M
+    if /I "%%~A"=="/NOPDF" set KEEPHTML=Y
     if exist "%%~A" (
         set DIR_OUT=%%~dpA
         set FILE_IN=%%~dpnxA
@@ -59,6 +60,7 @@ echo Options:
 echo     /MATH          Enable TeX equation rendering using MathJax
 echo     /KEEPHTML      Retains the intermediate HTML document used to
 echo                    render the PDF.
+echo     /NOPDF         Do not generate PDF, only HTML. For previewing.
 goto eof
 exit
 
@@ -91,15 +93,19 @@ if "%MATH%"=="Y" (
 (del /F /Q %HEADER_OUT% %MDHTML_OUT%)>nul
 
 :: STEP 3: HTML to PDF
-if "%MATH%"=="N" (
-    %WKHTML_DIR%\wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "%HTML_OUT%" "%PDF_OUT%"
-) else (
-    %WKHTML_DIR%\wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 5000 "%HTML_OUT%" "%PDF_OUT%"
+if /I not "%KEEPHTML%"=="Y" (
+    if "%MATH%"=="N" (
+        %WKHTML_DIR%\wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "%HTML_OUT%" "%PDF_OUT%"
+    ) else (
+        %WKHTML_DIR%\wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 10000 "%HTML_OUT%" "%PDF_OUT%"
+    )
 )
-if "%KEEPHTML%"=="N" (
+if /I "%KEEPHTML%"=="N" (
     (del /F /Q %HTML_OUT%)>nul
 )
-
-echo Wrote as %PDF_OUT%. Have a nice day!
-
+if /I "%KEEPHTML%"=="Y" (
+    echo Wrote as %HTML_OUT%. Have a nice day!
+) else (
+    echo Wrote as %PDF_OUT%. Have a nice day!
+)
 :eof

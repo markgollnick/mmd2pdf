@@ -36,9 +36,9 @@ b, strong {
   font-weight: bold;
   /*color: #083194;*/
 }
-tt {
+/*tt {
   color: navy;
-}
+}*/
 p {
   margin-top: 6pt;
   margin-bottom: 6pt;
@@ -55,12 +55,24 @@ li li {
 li p {
   margin: 0;
 }
-img {
-  border: 0;
-  max-width: 100%;
+figure {
+  margin-top: 12pt;
+  margin-bottom: 12pt;
+  margin-left: -12pt;
+  width: 100%;
+  text-align: center;
 }
-caption {
+img {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 6pt;
+  max-width: 100%;
+  border: 0;
+}
+caption, figcaption {
+  display: block;
   font-weight: bold;
+  text-align: center;
 }
 blockquote {
   margin-left: 12pt;
@@ -74,6 +86,7 @@ blockquote blockquote {
 table {
   margin-left: 24pt;
   margin-right: 48pt;
+  margin-bottom: 12pt;
   border-collapse: collapse;
 }
 thead, tfoot, th {

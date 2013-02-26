@@ -29,11 +29,12 @@ IFS=$'\n';
 for (( i=0; i<$argc; i++ )); do
     arg="${argv[$i]}"
     if [ "$arg" == "--math" ]; then MATH="Y"
-    elif [ "$arg" == "--keep-html" ]; then KEEPHTML="Y"
+    elif [ "$arg" == "--keep-html" ]; then KEEPHTML="M"
+    elif [ "$arg" == "--no-pdf" ]; then KEEPHTML="Y"
     elif [ -e "$arg" ]; then
         DIR_OUT=`dirname \`readlink -e $arg\``/
         FILE_IN=`basename \`readlink -e "$arg"\``
-        NAME_IN=${FILE_IN%%.*}
+        NAME_IN=${FILE_IN%.*}
         INIT="Y"
     fi
 done
@@ -59,6 +60,7 @@ Options:
     --math         Enable TeX equation rendering using MathJax
     --keep-html    Retains the intermediate HTML document used to
                    render the PDF.
+    --no-pdf       Do not generate PDF, only HTML. For previewing.
 "
     exit 1
 fi
@@ -91,13 +93,18 @@ cat $HEADER_OUT $MDHTML_OUT > $HTML_OUT
 rm -f $HEADER_OUT $MDHTML_OUT
 
 # STEP 3: HTML to PDF
-if [ "$MATH" == "N" ]; then
-    $WKHTML_DIR/wkhtmltopdf --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "$HTML_OUT" "$PDF_OUT"
-else
-    $WKHTML_DIR/wkhtmltopdf --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 5000 "$HTML_OUT" "$PDF_OUT"
+if [ "$KEEPHTML" != "Y" ]; then
+    if [ "$MATH" == "N" ]; then
+        $WKHTML_DIR/wkhtmltopdf --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "$HTML_OUT" "$PDF_OUT"
+    else
+        $WKHTML_DIR/wkhtmltopdf --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 10000 "$HTML_OUT" "$PDF_OUT"
+    fi
 fi
 if [ "$KEEPHTML" == "N" ]; then
     rm -f $HTML_OUT
 fi
-
-echo "Wrote as $PDF_OUT. Have a nice day!"
+if [ "$KEEPHTML" == "Y" ]; then
+    echo "Wrote as $HTML_OUT. Have a nice day!"
+else
+    echo "Wrote as $PDF_OUT. Have a nice day!"
+fi
