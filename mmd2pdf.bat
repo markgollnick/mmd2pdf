@@ -6,16 +6,8 @@ for /F "usebackq delims=" %%F in (`echo %~dpnx0`) do (
     set THIS=%%~nxF
     set WDIR=%%~dpF
 )
-for /F "usebackq delims=" %%F in (`dir /B %WDIR%\multimarkdown*`) do (
-    set MMD_DIR=%WDIR%\%%~nxF
-)
-for /F "usebackq delims=" %%F in (`dir /B %WDIR%\wkhtml*`) do (
-    set WKHTML_DIR=%WDIR%\%%~nxF
-)
-for /F "usebackq delims=" %%F in (`dir /B %WDIR%\mathjax*`) do (
-    set MATHJAX_JS=%WDIR%\%%~nxF\MathJax.js
-)
 set STYLE_CSS=%WDIR%\style.css
+set PDF_JS=%WDIR%\pdf.js
 
 
 :: Initialization
@@ -73,7 +65,7 @@ set HTML_OUT=%DIR_OUT%\%NAME_IN%.html
 set PDF_OUT=%DIR_OUT%\%NAME_IN%.pdf
 
 :: STEP 1: Markdown to HTML
-%MMD_DIR%\multimarkdown.exe "%FILE_IN%" > "%MDHTML_OUT%"
+multimarkdown.exe "%FILE_IN%" > "%MDHTML_OUT%"
 
 :: STEP 2: Format HTML
 (echo ^<!DOCTYPE html^>)>%HEADER_OUT%
@@ -83,7 +75,7 @@ set PDF_OUT=%DIR_OUT%\%NAME_IN%.pdf
 (echo     ^<title^>%NAME_IN%^</title^>)>>%HEADER_OUT%
 (echo     ^<link type="text/css" rel="stylesheet" href="%STYLE_CSS%" /^>)>>%HEADER_OUT%
 if "%MATH%"=="Y" (
-    (echo     ^<script type="text/javascript" src="%MATHJAX_JS%?config=pdf"^>)>>%HEADER_OUT%
+    (echo     ^<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=%PDF_JS%"^>)>>%HEADER_OUT%
     (echo     ^</script^>)>>%HEADER_OUT%
 )
 (echo ^</head^>)>>%HEADER_OUT%
@@ -95,9 +87,9 @@ if "%MATH%"=="Y" (
 :: STEP 3: HTML to PDF
 if /I not "%KEEPHTML%"=="Y" (
     if "%MATH%"=="N" (
-        %WKHTML_DIR%\wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "%HTML_OUT%" "%PDF_OUT%"
+        wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "%HTML_OUT%" "%PDF_OUT%"
     ) else (
-        %WKHTML_DIR%\wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 10000 "%HTML_OUT%" "%PDF_OUT%"
+        wkhtmltopdf.exe --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 10000 "%HTML_OUT%" "%PDF_OUT%"
     )
 )
 if /I "%KEEPHTML%"=="N" (

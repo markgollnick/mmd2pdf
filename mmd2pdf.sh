@@ -7,14 +7,23 @@ argv=($@)
 # Orientation
 THIS=`basename \`readlink -e $0\``
 WDIR=`dirname  \`readlink -e $0\``/
-MMD_DIR="$WDIR/`ls -w 1 --color=never $WDIR | grep -i multimarkdown`/"
-WKHTML_DIR="$WDIR/`ls -w 1 --color=never $WDIR | grep -i wkhtml`/"
-MATHJAX_JS="$WDIR/`ls -w 1 --color=never $WDIR | grep -i mathjax`/MathJax.js"
 STYLE_CSS="$WDIR/style.css"
+PDF_JS="$WDIR/pdf.js"
 if [ "${OS//[Ww][Ii][Nn]/}" != "" ]; then # on Windows, transform paths
-    MATHJAX_JS=`echo $MATHJAX_JS | sed 's_^\/\([A-Za-z]\)\/_\/\1\:\/_g'`
     STYLE_CSS=`echo $STYLE_CSS   | sed 's_^\/\([A-Za-z]\)\/_\/\1\:\/_g'`
+    PDF_JS=`echo $PDF_JS         | sed 's_^\/\([A-Za-z]\)\/_\/\1\:\/_g'`
 fi
+PDF_JS=file://$PDF_JS
+
+
+# Update pdf.js with the proper configuration name
+FIND="^MathJax.Ajax.loadComplete.*"
+REPL="MathJax.Ajax.loadComplete('$PDF_JS');"
+echo $FIND
+echo $REPL
+cat "$WDIR/pdf.js" | sed "s?$FIND?$REPL?g" > "$WDIR/pdf.js.tmp"
+rm "$WDIR/pdf.js"
+mv "$WDIR/pdf.js.tmp" "$WDIR/pdf.js"
 
 
 # Initialization
@@ -73,7 +82,7 @@ HTML_OUT="$DIR_OUT/$NAME_IN.html"
 PDF_OUT="$DIR_OUT/$NAME_IN.pdf"
 
 # STEP 1: Markdown to HTML
-$MMD_DIR/multimarkdown "$FILE_IN" > "$MDHTML_OUT"
+multimarkdown "$FILE_IN" > "$MDHTML_OUT"
 
 # STEP 2: Format HTML
 (echo \<!DOCTYPE html\>)>$HEADER_OUT
@@ -83,7 +92,7 @@ $MMD_DIR/multimarkdown "$FILE_IN" > "$MDHTML_OUT"
 (echo \<title\>$NAME_IN\</title\>)>>$HEADER_OUT
 (echo \<link type=\"text/css\" rel=\"stylesheet\" href=\"file://$STYLE_CSS\" /\>)>>$HEADER_OUT
 if [ "$MATH" == "Y" ]; then
-    (echo \<script type=\"text/javascript\" src=\"file://$MATHJAX_JS?config=pdf\"\>)>>$HEADER_OUT
+    (echo \<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=$PDF_JS\"\>)>>$HEADER_OUT
     (echo \</script\>)>>$HEADER_OUT
 fi
 (echo \</head\>)>>$HEADER_OUT
@@ -95,9 +104,9 @@ rm -f $HEADER_OUT $MDHTML_OUT
 # STEP 3: HTML to PDF
 if [ "$KEEPHTML" != "Y" ]; then
     if [ "$MATH" == "N" ]; then
-        $WKHTML_DIR/wkhtmltopdf --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "$HTML_OUT" "$PDF_OUT"
+        wkhtmltopdf --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 "$HTML_OUT" "$PDF_OUT"
     else
-        $WKHTML_DIR/wkhtmltopdf --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 10000 "$HTML_OUT" "$PDF_OUT"
+        wkhtmltopdf --margin-top 1in --margin-right 1in --margin-bottom 1in --margin-left 1in --enable-external-links --enable-internal-links --footer-center "Page [page] of [toPage]" --footer-font-name "Verdana" --footer-font-size 11 --enable-javascript --javascript-delay 10000 "$HTML_OUT" "$PDF_OUT"
     fi
 fi
 if [ "$KEEPHTML" == "N" ]; then
