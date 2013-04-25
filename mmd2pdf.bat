@@ -1,4 +1,9 @@
 @echo off
+rem mmd2pdf.bat
+rem @author Mark R. Gollnick <mark.r.gollnick@gmail.com> &#10013;
+rem @license Boost Software Licence v1.0 <http://www.boost.org/LICENSE_1_0.txt>
+rem @date 2013 Apr 25, Thu, 02:00 AM CDT
+rem @desc Convert Multi-Markdown text files to PDF files, easily.
 
 
 :: Orientation

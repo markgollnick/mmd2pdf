@@ -1,4 +1,9 @@
 #!/bin/bash
+# mmd2pdf.sh
+# @author Mark R. Gollnick <mark.r.gollnick@gmail.com> &#10013;
+# @license Boost Software Licence v1.0 <http://www.boost.org/LICENSE_1_0.txt>
+# @date 2013 Apr 25, Thu, 02:00 AM CDT
+# @desc Convert Multi-Markdown text files to PDF files, easily.
 
 argc=($#)
 argv=($@)

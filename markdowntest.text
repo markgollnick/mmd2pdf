@@ -1,0 +1,94 @@
+## EE 230
+### Lab 02
+#### Prepared by Mark R. Gollnick
+
+-------------------
+
+### Part 1
+
+This is **bold text**, this is *italic text*.
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+--------
+
+### Math Test
+
+\\(
+{A}_{v} = \frac{{v}_{i}}{{v}_{o}}
+\\)
+
+<div style="page-break-after: always;"></div>
+
+--------
+
+### Part 2
+
+This is a [link][google].
+
+[google]: http://www.google.com/
+
+This is a list:
+
+* Item
+    * subitem
+    * subitem
+* Item
+    * subitem
+    * subitem
+        * subsubitem
+        * see the following code:
+
+                blah
+                bloo
+                blee
+
+        * subsubitem
+        * subsubitem
+    * subitem
+* last
+
+This is a quote:
+
+> Line one
+> 
+> Line two
+> 
+> > Embedded
+> > 
+> > Line
+> 
+> Line three
+> 
+> Line four
+
+This is some `source code`:
+
+    #include <stdio.h>
+    
+    int main(void) {
+        printf("Hello, world!\n");
+        return 0;
+    }
+
+This is a table:
+
+| Header 1    | Header 2    |
+| ----------- | ----------- |
+| item        | item        |
+| nother item | nother item |
+
+This is a dictionary:
+
+Red
+: Roses are red
+
+Violet
+: Violets are blue
+
+The end.
