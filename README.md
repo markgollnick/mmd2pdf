@@ -1,14 +1,13 @@
 MMD2PDF
 =======
 
-Convert Multi-Markdown text files to PDF files, easily!
+Convert MultiMarkdown-formatted text files to pretty PDF files, easily!
 
+![Screenshot](http://content.screencast.com/users/markgollnick/folders/Jing/media/17e3c770-08d4-4daa-8575-682f7b22c482/mmd2pdf-screen-20130909230931.png)
 
-Purpose
--------
+**Supports basic LaTeX equations!**
 
-To generate a pretty PDF file from a Markdown-formatted text document,
-without requiring the user to install TeX-Live (because it EATS GIGABYTES).
+E.g., \\( {a}^{2} + {b}^{2} = {c}^{2} \\)
 
 
 Requirements
@@ -25,11 +24,13 @@ Usage
 1. Install:
 
         git clone git@github.com/markgollnick/mmd2pdf.git ~/.mmd2pdf
+        cd ~/.mmd2pdf
+        git submodule update --init
         export PATH=$HOME/.mmd2pdf
 
 2. Use:
 
-        mmd2pdf lab_report.text
+        mmd2pdf lab_report.md
 
 3. There is no step 3! (Except turning in that lab report.)
 
