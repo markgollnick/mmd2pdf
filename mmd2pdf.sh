@@ -48,7 +48,9 @@ for (( i=0; i<$ARGC; i++ )); do
         INIT="Y"
     fi
 done
-
+if [[ "$DIR_OUT" == "$FILE_IN" ]]; then
+    DIR_OUT="."
+fi
 
 # Usage Block
 if [ "$INIT" != "Y" ]; then
