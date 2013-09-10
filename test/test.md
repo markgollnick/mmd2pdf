@@ -139,9 +139,13 @@ Check out this source code:
 
 Math (will only work if `--math` was specified, otherwise, will be plain LaTeX)
 
-\\(
+Inline Math looks like \\( {A}_{v} = \frac{{v}_{i}}{{v}_{o}} \\)
+
+Block Math looks like:
+
+\\[
 {A}_{v} = \frac{{v}_{i}}{{v}_{o}}
-\\)
+\\]
 
 --------
 
