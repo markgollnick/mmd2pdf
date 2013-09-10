@@ -24,8 +24,11 @@ body {
 
 
 h1, h2, h3, h4, h5, h6, hr {
+    margin-top: 24pt;
     margin-left: -24pt;
-    margin-bottom: 6pt;
+    margin-bottom: 12pt;
+    padding-bottom: 3px;
+    border-bottom: 2px solid #ccc;
 }
 hr {
     margin-top: 12pt;
