@@ -13,6 +13,7 @@ for /F "usebackq delims=" %%F in (`echo %~dpnx0`) do (
 )
 set STYLE_CSS=%WDIR%\style.css
 set MATHJAX_JS=http://cdn.mathjax.org/mathjax/latest/MathJax.js
+set CONFIG_JS=%WDIR%\config.js
 
 
 :: Initialization
@@ -86,11 +87,7 @@ multimarkdown.exe "%FILE_IN%" > "%MDHTML_OUT%"
 if "%MATH%"=="Y" goto mathjax else goto resume
 :mathjax
 (echo ^<script type="text/x-mathjax-config"^>)>>%HEADER_OUT%
-(echo   MathJax.Hub.Config({)>>%HEADER_OUT%
-(echo     extensions: ["tex2jax.js"],)>>%HEADER_OUT%
-(echo     jax: ["input/TeX", "output/HTML-CSS"],)>>%HEADER_OUT%
-(echo     tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]})>>%HEADER_OUT%
-(echo   }^);)>>%HEADER_OUT%
+(type %CONFIG_JS%)>>%HEADER_OUT%
 (echo ^</script^>)>>%HEADER_OUT%
 (echo ^<script type="text/javascript" src="%MATHJAX_JS%"^>)>>%HEADER_OUT%
 (echo ^</script^>)>>%HEADER_OUT%

@@ -20,6 +20,7 @@ case "$OS" in *"Win"*)
 ;; esac
 STYLE_CSS="file://$STYLE_CSS"
 MATHJAX_JS="http://cdn.mathjax.org/mathjax/latest/MathJax.js"
+CONFIG_JS="$WDIR/config.js"
 
 
 # Initialization
@@ -95,15 +96,11 @@ multimarkdown "$FILE_IN" > "$MDHTML_OUT"
 <title>$NAME_IN</title>
 <link type=\"text/css\" rel=\"stylesheet\" href=\"$STYLE_CSS\" />")>$HEADER_OUT
 if [ "$MATH" == "Y" ]; then
-    (echo "
-<script type=\"text/x-mathjax-config\">
-  MathJax.Hub.Config({
-    extensions: [\"tex2jax.js\"],
-    jax: [\"input/TeX\", \"output/HTML-CSS\"],
-    tex2jax: {inlineMath: [[\"\$\",\"\$\"],[\"\\\\(\",\"\\\\)\"]]}
-  });
-</script>")>>$HEADER_OUT
-    (echo "
+    (echo "<script type=\"text/x-mathjax-config\">")>>$HEADER_OUT
+    mv $HEADER_OUT $HEADER_OUT.editing
+    cat $HEADER_OUT.editing $CONFIG_JS > $HEADER_OUT
+    rm $HEADER_OUT.editing
+    (echo "</script>
 <script type=\"text/javascript\" src=\"$MATHJAX_JS\"></script>")>>$HEADER_OUT
 fi
 (echo "</head><body>")>>$HEADER_OUT
