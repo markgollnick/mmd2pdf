@@ -2,33 +2,23 @@
 # mmd2pdf.sh
 # @author Mark R. Gollnick <mark.r.gollnick@gmail.com> &#10013;
 # @license Boost Software Licence v1.0 <http://www.boost.org/LICENSE_1_0.txt>
-# @date 2013 Apr 25, Thu, 02:00 AM CDT
+# @date Mon, 09 Aug 2013 10:36:40 -0500
 # @desc Convert Multi-Markdown text files to PDF files, easily.
 
-argc=($#)
-argv=($@)
+ARGC=($#)
+ARGV=($@)
+WDIR=$([[ $0 == /* ]] && echo "${0%/*}" || echo "${PWD}/${0%/*}")
+THIS=$([[ $0 == /* ]] && echo "${0##*/}" || echo "${0##*/}")
+POS=$'/'
+DOS=$'\\\\'
 
 
 # Orientation
-THIS=`basename \`readlink -e $0\``
-WDIR=`dirname  \`readlink -e $0\``/
 STYLE_CSS="$WDIR/style.css"
-PDF_JS="$WDIR/pdf.js"
-if [ "${OS//[Ww][Ii][Nn]/}" != "" ]; then # on Windows, transform paths
-    STYLE_CSS=`echo $STYLE_CSS   | sed 's_^\/\([A-Za-z]\)\/_\/\1\:\/_g'`
-    PDF_JS=`echo $PDF_JS         | sed 's_^\/\([A-Za-z]\)\/_\/\1\:\/_g'`
-fi
-PDF_JS=file://$PDF_JS
-
-
-# Update pdf.js with the proper configuration name
-FIND="^MathJax.Ajax.loadComplete.*"
-REPL="MathJax.Ajax.loadComplete('$PDF_JS');"
-echo $FIND
-echo $REPL
-cat "$WDIR/pdf.js" | sed "s?$FIND?$REPL?g" > "$WDIR/pdf.js.tmp"
-rm "$WDIR/pdf.js"
-mv "$WDIR/pdf.js.tmp" "$WDIR/pdf.js"
+case "$OS" in *"Win"*)
+    STYLE_CSS=/${STYLE_CSS:1:1}:${STYLE_CSS:2}
+;; esac
+STYLE_CSS="file://$STYLE_CSS"
 
 
 # Initialization
@@ -39,15 +29,16 @@ unset FILE_IN
 unset NAME_IN
 INIT="N"
 
+SAVE_IFS=$IFS
 IFS=$'\n';
-for (( i=0; i<$argc; i++ )); do
-    arg="${argv[$i]}"
+for (( i=0; i<$ARGC; i++ )); do
+    arg="${ARGV[$i]}"
     if [ "$arg" == "--math" ]; then MATH="Y"
     elif [ "$arg" == "--keep-html" ]; then KEEPHTML="M"
     elif [ "$arg" == "--no-pdf" ]; then KEEPHTML="Y"
     elif [ -e "$arg" ]; then
-        DIR_OUT=`dirname \`readlink -e $arg\``/
-        FILE_IN=`basename \`readlink -e "$arg"\``
+        DIR_OUT=$(dirname `readlink -e "$arg"`)
+        FILE_IN=$(basename `readlink -e "$arg"`)
         NAME_IN=${FILE_IN%.*}
         INIT="Y"
     fi
@@ -58,11 +49,15 @@ done
 if [ "$INIT" != "Y" ]; then
     echo "
 $THIS:
-Batch script for easily converting MultiMarkdown texts into PDF documents.
-Written by Mark R. Gollnick <mark.r.gollnick@gmail.com>, Spring 2013. &#10013;
+Shell script for easily converting MultiMarkdown texts into PDF documents.
+Written by Mark R. Gollnick <mark.r.gollnick@gmail.com>, Fall 2013. &#10013;
+
+Requirements:
+    MultiMarkdown:  fletcherpenny.net/multimarkdown
+    wkhtmltopdf:    code.google.com/p/wkhtmltopdf
 
 Usage:
-$THIS [OPTIONS] <input_file.md>
+    $THIS [OPTIONS] <input_file.md>
 
 Produces one file of the form \`input_file.pdf' in the same directory
 as the input.
@@ -95,7 +90,7 @@ multimarkdown "$FILE_IN" > "$MDHTML_OUT"
 (echo \<head\>)>>$HEADER_OUT
 (echo \<meta charset=\"utf-8\"/\>)>>$HEADER_OUT
 (echo \<title\>$NAME_IN\</title\>)>>$HEADER_OUT
-(echo \<link type=\"text/css\" rel=\"stylesheet\" href=\"file://$STYLE_CSS\" /\>)>>$HEADER_OUT
+(echo \<link type=\"text/css\" rel=\"stylesheet\" href=\"$STYLE_CSS\" /\>)>>$HEADER_OUT
 if [ "$MATH" == "Y" ]; then
     (echo \<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=$PDF_JS\"\>)>>$HEADER_OUT
     (echo \</script\>)>>$HEADER_OUT

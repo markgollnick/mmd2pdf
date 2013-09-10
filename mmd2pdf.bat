@@ -2,7 +2,7 @@
 rem mmd2pdf.bat
 rem @author Mark R. Gollnick <mark.r.gollnick@gmail.com> &#10013;
 rem @license Boost Software Licence v1.0 <http://www.boost.org/LICENSE_1_0.txt>
-rem @date 2013 Apr 25, Thu, 02:00 AM CDT
+rem @date Mon, 09 Aug 2013 10:36:40 -0500
 rem @desc Convert Multi-Markdown text files to PDF files, easily.
 
 
@@ -12,7 +12,6 @@ for /F "usebackq delims=" %%F in (`echo %~dpnx0`) do (
     set WDIR=%%~dpF
 )
 set STYLE_CSS=%WDIR%\style.css
-set PDF_JS=%WDIR%\pdf.js
 
 
 :: Initialization
@@ -44,8 +43,12 @@ echo %THIS%:
 echo Batch script for easily converting MultiMarkdown texts into PDF documents.
 echo Written by Mark R. Gollnick ^<mark.r.gollnick@gmail.com^>, Spring 2013. ^&#10013;
 echo.
+echo Requirements:
+echo     MultiMarkdown:  fletcherpenny.net/multimarkdown
+echo     wkhtmltopdf:    code.google.com/p/wkhtmltopdf
+echo.
 echo Usage:
-echo %THIS% [OPTIONS] ^<input_file.md^>
+echo     %THIS% [OPTIONS] ^<input_file.md^>
 echo.
 echo Produces one file of the form `input_file.pdf' in the same directory
 echo as the input.
@@ -76,12 +79,12 @@ multimarkdown.exe "%FILE_IN%" > "%MDHTML_OUT%"
 (echo ^<!DOCTYPE html^>)>%HEADER_OUT%
 (echo ^<html^>)>>%HEADER_OUT%
 (echo ^<head^>)>>%HEADER_OUT%
-(echo     ^<meta charset="utf-8"/^>)>>%HEADER_OUT%
-(echo     ^<title^>%NAME_IN%^</title^>)>>%HEADER_OUT%
-(echo     ^<link type="text/css" rel="stylesheet" href="%STYLE_CSS%" /^>)>>%HEADER_OUT%
+(echo ^<meta charset="utf-8"/^>)>>%HEADER_OUT%
+(echo ^<title^>%NAME_IN%^</title^>)>>%HEADER_OUT%
+(echo ^<link type="text/css" rel="stylesheet" href="%STYLE_CSS%" /^>)>>%HEADER_OUT%
 if "%MATH%"=="Y" (
-    (echo     ^<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=%PDF_JS%"^>)>>%HEADER_OUT%
-    (echo     ^</script^>)>>%HEADER_OUT%
+    (echo ^<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=%PDF_JS%"^>)>>%HEADER_OUT%
+    (echo ^</script^>)>>%HEADER_OUT%
 )
 (echo ^</head^>)>>%HEADER_OUT%
 (echo ^<body^>)>>%HEADER_OUT%
