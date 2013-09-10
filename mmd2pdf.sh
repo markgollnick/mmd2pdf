@@ -15,11 +15,13 @@ DOS=$'\\\\'
 
 # Orientation
 STYLE_CSS="$WDIR/style.css"
+MATHJAX_JS="$WDIR/externals/MathJax/MathJax.js"
 case "$OS" in *"Win"*)
     STYLE_CSS=/${STYLE_CSS:1:1}:${STYLE_CSS:2}
+    MATHJAX_JS=/${MATHJAX_JS:1:1}:${MATHJAX_JS:2}
 ;; esac
 STYLE_CSS="file://$STYLE_CSS"
-MATHJAX_JS="http://cdn.mathjax.org/mathjax/latest/MathJax.js"
+MATHJAX_JS="file://$MATHJAX_JS"
 CONFIG_JS="$WDIR/config.js"
 
 

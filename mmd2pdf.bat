@@ -13,7 +13,7 @@ for /F "usebackq delims=" %%F in (`echo %~dpnx0`) do (
 )
 set WDIR=%WDIR:~0,-1%
 set STYLE_CSS=%WDIR%\style.css
-set MATHJAX_JS=http://cdn.mathjax.org/mathjax/latest/MathJax.js
+set MATHJAX_JS=%WDIR%\externals\MathJax\MathJax.js
 set CONFIG_JS=%WDIR%\config.js
 
 
