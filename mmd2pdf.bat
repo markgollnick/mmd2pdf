@@ -12,9 +12,9 @@ for /F "usebackq delims=" %%F in (`echo %~dpnx0`) do (
     set THIS=%%~nxF
 )
 set WDIR=%WDIR:~0,-1%
-set STYLE_CSS=%WDIR%\style.css
+set STYLE_CSS=%WDIR%\css\style.css
 set MATHJAX_JS=%WDIR%\externals\MathJax\MathJax.js
-set CONFIG_JS=%WDIR%\config.js
+set CONFIG_JS=%WDIR%\js\config.js
 
 
 :: Initialization

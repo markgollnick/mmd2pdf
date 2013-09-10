@@ -14,7 +14,7 @@ POS=$'/'
 DOS=$'\\\\'
 
 # Orientation
-STYLE_CSS="$WDIR/style.css"
+STYLE_CSS="$WDIR/css/style.css"
 MATHJAX_JS="$WDIR/externals/MathJax/MathJax.js"
 case "$OS" in *"Win"*)
     STYLE_CSS=/${STYLE_CSS:1:1}:${STYLE_CSS:2}
@@ -22,7 +22,7 @@ case "$OS" in *"Win"*)
 ;; esac
 STYLE_CSS="file://$STYLE_CSS"
 MATHJAX_JS="file://$MATHJAX_JS"
-CONFIG_JS="$WDIR/config.js"
+CONFIG_JS="$WDIR/js/config.js"
 
 
 # Initialization
