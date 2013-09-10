@@ -8,10 +8,10 @@
 ARGC=($#)
 ARGV=($@)
 WDIR=$([[ $0 == /* ]] && echo "${0%/*}" || echo "${PWD}/${0%/*}")
-THIS=$([[ $0 == /* ]] && echo "${0##*/}" || echo "${0##*/}")
+WDIR=${WDIR%/.}
+THIS=${0##*/}
 POS=$'/'
 DOS=$'\\\\'
-
 
 # Orientation
 STYLE_CSS="$WDIR/style.css"
@@ -40,8 +40,8 @@ for (( i=0; i<$ARGC; i++ )); do
     elif [ "$arg" == "--no-pdf" ]; then KEEPHTML="Y"
     elif [ -e "$arg" ]; then
         FILE_IN="$arg"
-        DIR_OUT=${FILE_IN%/*}/
-        NAME_IN=${FILE_IN#$DIR_OUT}
+        DIR_OUT=${FILE_IN%/*}
+        NAME_IN=${FILE_IN#$DIR_OUT/}
         NAME_IN=${NAME_IN%.*}
         INIT="Y"
     fi
@@ -88,8 +88,7 @@ PDF_OUT="$DIR_OUT/$NAME_IN.pdf"
 multimarkdown "$FILE_IN" > "$MDHTML_OUT"
 
 # STEP 2: Format HTML
-(echo "
-<!DOCTYPE html>
+(echo "<!DOCTYPE html>
 <html>
 <head>
 <meta charset=\"utf-8\" />
@@ -101,11 +100,14 @@ if [ "$MATH" == "Y" ]; then
     cat $HEADER_OUT.editing $CONFIG_JS > $HEADER_OUT
     rm $HEADER_OUT.editing
     (echo "</script>
-<script type=\"text/javascript\" src=\"$MATHJAX_JS\"></script>")>>$HEADER_OUT
+<script type=\"text/javascript\" src=\"$MATHJAX_JS\">
+</script>")>>$HEADER_OUT
 fi
-(echo "</head><body>")>>$HEADER_OUT
+(echo "</head>
+<body>")>>$HEADER_OUT
 cat $HEADER_OUT $MDHTML_OUT > $HTML_OUT
-(echo "</body></html>")>>$HTML_OUT
+(echo "</body>
+</html>")>>$HTML_OUT
 rm -f $HEADER_OUT $MDHTML_OUT
 
 # STEP 3: HTML to PDF

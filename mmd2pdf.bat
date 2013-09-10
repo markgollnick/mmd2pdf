@@ -8,9 +8,10 @@ rem @desc Convert Multi-Markdown text files to PDF files, easily.
 
 :: Orientation
 for /F "usebackq delims=" %%F in (`echo %~dpnx0`) do (
-    set THIS=%%~nxF
     set WDIR=%%~dpF
+    set THIS=%%~nxF
 )
+set WDIR=%WDIR:~0,-1%
 set STYLE_CSS=%WDIR%\style.css
 set MATHJAX_JS=http://cdn.mathjax.org/mathjax/latest/MathJax.js
 set CONFIG_JS=%WDIR%\config.js
@@ -19,7 +20,7 @@ set CONFIG_JS=%WDIR%\config.js
 :: Initialization
 set MATH=N
 set KEEPHTML=N
-set DIR_OUT=.
+set DIR_OUT=.\
 set FILE_IN=
 set NAME_IN=
 set INIT=N
@@ -35,6 +36,7 @@ for %%A in (%*) do (
         set INIT=Y
     )
 )
+set DIR_OUT=%DIR_OUT:~0,-1%
 if /I "%INIT%"=="N" goto usage
 goto run
 
@@ -81,7 +83,7 @@ multimarkdown.exe "%FILE_IN%" > "%MDHTML_OUT%"
 (echo ^<!DOCTYPE html^>)>%HEADER_OUT%
 (echo ^<html^>)>>%HEADER_OUT%
 (echo ^<head^>)>>%HEADER_OUT%
-(echo ^<meta charset="utf-8"/^>)>>%HEADER_OUT%
+(echo ^<meta charset="utf-8" /^>)>>%HEADER_OUT%
 (echo ^<title^>%NAME_IN%^</title^>)>>%HEADER_OUT%
 (echo ^<link type="text/css" rel="stylesheet" href="%STYLE_CSS%" /^>)>>%HEADER_OUT%
 if "%MATH%"=="Y" goto mathjax else goto resume
@@ -96,7 +98,8 @@ goto resume
 (echo ^</head^>)>>%HEADER_OUT%
 (echo ^<body^>)>>%HEADER_OUT%
 (copy /B /Y %HEADER_OUT% + %MDHTML_OUT% %HTML_OUT%)>nul
-(echo ^</body^>^</html^>)>>%HTML_OUT%
+(echo ^</body^>)>>%HTML_OUT%
+(echo ^</html^>)>>%HTML_OUT%
 (del /F /Q %HEADER_OUT% %MDHTML_OUT%)>nul
 
 :: STEP 3: HTML to PDF
