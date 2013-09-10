@@ -12,6 +12,7 @@ for /F "usebackq delims=" %%F in (`echo %~dpnx0`) do (
     set WDIR=%%~dpF
 )
 set STYLE_CSS=%WDIR%\style.css
+set MATHJAX_JS=http://cdn.mathjax.org/mathjax/latest/MathJax.js
 
 
 :: Initialization
@@ -82,10 +83,19 @@ multimarkdown.exe "%FILE_IN%" > "%MDHTML_OUT%"
 (echo ^<meta charset="utf-8"/^>)>>%HEADER_OUT%
 (echo ^<title^>%NAME_IN%^</title^>)>>%HEADER_OUT%
 (echo ^<link type="text/css" rel="stylesheet" href="%STYLE_CSS%" /^>)>>%HEADER_OUT%
-if "%MATH%"=="Y" (
-    (echo ^<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=%PDF_JS%"^>)>>%HEADER_OUT%
-    (echo ^</script^>)>>%HEADER_OUT%
-)
+if "%MATH%"=="Y" goto mathjax else goto resume
+:mathjax
+(echo ^<script type="text/x-mathjax-config"^>)>>%HEADER_OUT%
+(echo   MathJax.Hub.Config({)>>%HEADER_OUT%
+(echo     extensions: ["tex2jax.js"],)>>%HEADER_OUT%
+(echo     jax: ["input/TeX", "output/HTML-CSS"],)>>%HEADER_OUT%
+(echo     tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]})>>%HEADER_OUT%
+(echo   }^);)>>%HEADER_OUT%
+(echo ^</script^>)>>%HEADER_OUT%
+(echo ^<script type="text/javascript" src="%MATHJAX_JS%"^>)>>%HEADER_OUT%
+(echo ^</script^>)>>%HEADER_OUT%
+goto resume
+:resume
 (echo ^</head^>)>>%HEADER_OUT%
 (echo ^<body^>)>>%HEADER_OUT%
 (copy /B /Y %HEADER_OUT% + %MDHTML_OUT% %HTML_OUT%)>nul

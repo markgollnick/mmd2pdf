@@ -19,6 +19,7 @@ case "$OS" in *"Win"*)
     STYLE_CSS=/${STYLE_CSS:1:1}:${STYLE_CSS:2}
 ;; esac
 STYLE_CSS="file://$STYLE_CSS"
+MATHJAX_JS="http://cdn.mathjax.org/mathjax/latest/MathJax.js"
 
 
 # Initialization
@@ -37,9 +38,10 @@ for (( i=0; i<$ARGC; i++ )); do
     elif [ "$arg" == "--keep-html" ]; then KEEPHTML="M"
     elif [ "$arg" == "--no-pdf" ]; then KEEPHTML="Y"
     elif [ -e "$arg" ]; then
-        DIR_OUT=$(dirname `readlink -e "$arg"`)
-        FILE_IN=$(basename `readlink -e "$arg"`)
-        NAME_IN=${FILE_IN%.*}
+        FILE_IN="$arg"
+        DIR_OUT=${FILE_IN%/*}/
+        NAME_IN=${FILE_IN#$DIR_OUT}
+        NAME_IN=${NAME_IN%.*}
         INIT="Y"
     fi
 done
@@ -85,20 +87,28 @@ PDF_OUT="$DIR_OUT/$NAME_IN.pdf"
 multimarkdown "$FILE_IN" > "$MDHTML_OUT"
 
 # STEP 2: Format HTML
-(echo \<!DOCTYPE html\>)>$HEADER_OUT
-(echo \<html\>)>>$HEADER_OUT
-(echo \<head\>)>>$HEADER_OUT
-(echo \<meta charset=\"utf-8\"/\>)>>$HEADER_OUT
-(echo \<title\>$NAME_IN\</title\>)>>$HEADER_OUT
-(echo \<link type=\"text/css\" rel=\"stylesheet\" href=\"$STYLE_CSS\" /\>)>>$HEADER_OUT
+(echo "
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=\"utf-8\" />
+<title>$NAME_IN</title>
+<link type=\"text/css\" rel=\"stylesheet\" href=\"$STYLE_CSS\" />")>$HEADER_OUT
 if [ "$MATH" == "Y" ]; then
-    (echo \<script type=\"text/javascript\" src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=$PDF_JS\"\>)>>$HEADER_OUT
-    (echo \</script\>)>>$HEADER_OUT
+    (echo "
+<script type=\"text/x-mathjax-config\">
+  MathJax.Hub.Config({
+    extensions: [\"tex2jax.js\"],
+    jax: [\"input/TeX\", \"output/HTML-CSS\"],
+    tex2jax: {inlineMath: [[\"\$\",\"\$\"],[\"\\\\(\",\"\\\\)\"]]}
+  });
+</script>")>>$HEADER_OUT
+    (echo "
+<script type=\"text/javascript\" src=\"$MATHJAX_JS\"></script>")>>$HEADER_OUT
 fi
-(echo \</head\>)>>$HEADER_OUT
-(echo \<body\>)>>$HEADER_OUT
+(echo "</head><body>")>>$HEADER_OUT
 cat $HEADER_OUT $MDHTML_OUT > $HTML_OUT
-(echo \</body\>\</html\>)>>$HTML_OUT
+(echo "</body></html>")>>$HTML_OUT
 rm -f $HEADER_OUT $MDHTML_OUT
 
 # STEP 3: HTML to PDF
