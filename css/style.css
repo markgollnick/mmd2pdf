@@ -24,41 +24,32 @@ body {
 
 
 h1, h2, h3, h4, h5, h6, hr {
-    margin-top: 24pt;
     margin-left: -24pt;
     margin-bottom: 12pt;
-    padding-bottom: 3px;
-    border-bottom: 2px solid #ccc;
+}
+h1, h2 {
+    padding-bottom: 1pt;
+    border-bottom: 3pt solid #ccc;
 }
 hr {
     margin-top: 12pt;
-    margin-bottom: 12pt;
-    border-top: 5px solid #ccc;
+    border-top: 3pt solid #ccc;
 }
 
 
 p {
     margin-bottom: 6pt;
 }
+li p {
+    margin: 0;
+}
 li {
     margin-left: 24pt;
     margin-bottom: 6pt;
-    /*list-style-type: none;*/
-}
-li:before {
-    position: absolute;
-    margin-left: -24pt;
-    /*content: '\2022  ';*/ /* use unicode bullets */
-    font-family: monospace;
-    font-size: 12pt;
 }
 li li {
     margin-top: 6pt;
     margin-bottom: 0;
-}
-li p {
-    display: inline-block;
-    margin: 0; /* <li> element already has padding */
 }
 
 
@@ -71,7 +62,7 @@ img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    border: 3px solid #ccc;
+    border: 2pt solid #ccc;
     padding: 3pt;
 }
 figcaption, caption {
@@ -96,13 +87,17 @@ dd {
 
 
 table {
+    margin-top: 6pt;
     margin-left: 24pt;
     margin-bottom: 6pt;
-    border: 3px solid #ccc;
+    border: 2pt solid #ccc;
     border-collapse: collapse;
 }
+th {
+    background-color: #eee;
+}
 th, td {
-    border: 2px solid #ccc;
+    border: 2pt solid #ccc;
     padding: 3pt;
 }
 
@@ -116,8 +111,8 @@ blockquote {
 
 
 code {
-  background-color: #f8f8ff;
-  border: 1px solid #dedede;
+    background-color: #f8f8ff;
+    border: 1px solid #dedede;
 
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
