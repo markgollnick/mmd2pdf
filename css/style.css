@@ -51,12 +51,16 @@ li li {
     margin-top: 6pt;
     margin-bottom: 0;
 }
+li ul {
+    margin-bottom: 6pt;
+}
 
 
 figure {
     display: inline-block;
     width: 100%;
     text-align: center;
+    vertical-align: top;
 }
 img {
     display: block;
