@@ -1,3 +1,6 @@
 [submodule "externals/MathJax"]
 	path = externals/MathJax
 	url = git@github.com:mathjax/MathJax.git
+[submodule "externals/highlight.js"]
+	path = externals/highlight.js
+	url = git@github.com:isagalaev/highlight.js.git
