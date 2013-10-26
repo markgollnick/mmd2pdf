@@ -2,7 +2,7 @@
 # mmd2pdf.sh
 # @author Mark R. Gollnick <mark.r.gollnick@gmail.com> &#10013;
 # @license Boost Software Licence v1.0 <http://www.boost.org/LICENSE_1_0.txt>
-# @date Mon, 09 Aug 2013 10:36:40 -0500
+# @date Fri, 30 Oct 2013 21:04:10 -0500
 # @desc Convert Multi-Markdown text files to PDF files, easily.
 
 ARGC=($#)
@@ -16,13 +16,19 @@ DOS=$'\\\\'
 # Orientation
 STYLE_CSS="$WDIR/css/style.css"
 MATHJAX_JS="$WDIR/externals/MathJax/MathJax.js"
+HIGHLIGHT_JS="$WDIR/externals/highlight.min.js"
+HIGHLIGHT_CSS="$WDIR/externals/highlight.js/src/styles/github.css"
 case "$OS" in *"Win"*)
     STYLE_CSS=/${STYLE_CSS:1:1}:${STYLE_CSS:2}
     MATHJAX_JS=/${MATHJAX_JS:1:1}:${MATHJAX_JS:2}
+    HIGHLIGHT_JS=/${HIGHLIGHT_JS:1:1}:${HIGHLIGHT_JS:2}
+    HIGHLIGHT_CSS=/${HIGHLIGHT_CSS:1:1}:${HIGHLIGHT_CSS:2}
 ;; esac
 STYLE_CSS="file://$STYLE_CSS"
 MATHJAX_JS="file://$MATHJAX_JS"
 CONFIG_JS="$WDIR/js/config.js"
+HIGHLIGHT_JS="file://$HIGHLIGHT_JS"
+HIGHLIGHT_CSS="file://$HIGHLIGHT_CSS"
 
 
 # Initialization
@@ -97,7 +103,8 @@ multimarkdown "$FILE_IN" > "$MDHTML_OUT"
 <head>
 <meta charset=\"utf-8\" />
 <title>$NAME_IN</title>
-<link type=\"text/css\" rel=\"stylesheet\" href=\"$STYLE_CSS\" />")>$HEADER_OUT
+<link type=\"text/css\" rel=\"stylesheet\" href=\"$STYLE_CSS\" />
+<link type=\"text/css\" rel=\"stylesheet\" href=\"$HIGHLIGHT_CSS\" />")>$HEADER_OUT
 if [ "$MATH" == "Y" ]; then
     (echo "<script type=\"text/x-mathjax-config\">")>>$HEADER_OUT
     mv $HEADER_OUT $HEADER_OUT.editing
@@ -105,12 +112,19 @@ if [ "$MATH" == "Y" ]; then
     rm $HEADER_OUT.editing
     (echo "</script>
 <script type=\"text/javascript\" src=\"$MATHJAX_JS\">
+</script>
+<script type=\"text/javascript\" src=\"$HIGHLIGHT_JS\">
 </script>")>>$HEADER_OUT
 fi
 (echo "</head>
 <body>")>>$HEADER_OUT
 cat $HEADER_OUT $MDHTML_OUT > $HTML_OUT
-(echo "</body>
+(echo "
+<script type=\"text/javascript\">
+hljs.tabReplace = '    '; //4 spaces
+hljs.initHighlightingOnLoad();
+</script>
+</body>
 </html>")>>$HTML_OUT
 rm -f $HEADER_OUT $MDHTML_OUT
 

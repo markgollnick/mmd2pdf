@@ -137,7 +137,7 @@ pre {
     margin-right: 48pt;
     padding: 4pt;
     border: 1px solid #ddd;
-    background-color: #eee;
+    background-color: #f8f8ff;
     overflow: hidden;
 
     -webkit-box-shadow: rgba(0,0,0,0.07) 0 1px 2px inset;
@@ -160,7 +160,7 @@ pre, code {
     color: #444;
 }
 pre code {
-    background-color: #eee;
+    background-color: #f8f8ff;
     border: none;
 }
 
